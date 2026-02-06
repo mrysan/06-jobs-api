@@ -7,7 +7,7 @@ const getFit = async (req, res) => {
 };
 
 const createFit = async (req, res) => {
-  res.send("create a fit");
+  res.json(req.user);
 };
 
 const updateFit = async (req, res) => {
