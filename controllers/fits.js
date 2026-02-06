@@ -1,3 +1,7 @@
+const Fit = require("../models/Fit");
+const { StatusCodes } = require("http-status-codes");
+const { BadRequestError, NotFoundError } = require("../errors");
+
 const getAllFits = async (req, res) => {
   res.send("get all fits");
 };
@@ -7,7 +11,11 @@ const getFit = async (req, res) => {
 };
 
 const createFit = async (req, res) => {
-  res.json(req.user);
+  req.body.createdBy = req.user.userId;
+
+  const fit = await Fit.create(req.body);
+
+  res.status(StatusCodes.CREATED).json(fit);
 };
 
 const updateFit = async (req, res) => {

@@ -12,7 +12,8 @@ const auth = async (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    //attack the user to the fit route
+
+    //attach the user to the fit route
     req.user = { userId: payload.userId, name: payload.name };
     next();
   } catch (error) {
