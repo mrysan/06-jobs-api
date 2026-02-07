@@ -9,13 +9,8 @@ const {
   deleteFit,
 } = require("../controllers/fits");
 
-router
-  .route("/")
-  .get(getAllFits)
-  .post(createFit)
-  .patch(updateFit)
-  .delete(deleteFit);
+router.route("/").get(getAllFits).post(createFit);
 
-router.route("/:id").get(getFit);
+router.route("/:id").get(getFit).patch(updateFit).delete(deleteFit);
 
 module.exports = router;
