@@ -3,11 +3,26 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
 const getAllFits = async (req, res) => {
-  res.send("get all fits");
+  const fits = await Fit.find({ createdBy: req.user.userId }).sort("createdAt");
+
+  res.status(StatusCodes.OK).json({ fits, count: fits.length });
 };
 
 const getFit = async (req, res) => {
-  res.send("get all fits");
+  const {
+    user: { userId },
+    params: { id: fitId },
+  } = req;
+
+  const fit = await Fit.findOne({
+    _id: fitId,
+    createdBy: userId,
+  });
+
+  if (!fit) {
+    throw new NotFoundError(`No fit with id ${fitId}`);
+  }
+  res.status(StatusCodes.OK).json(fit);
 };
 
 const createFit = async (req, res) => {
@@ -19,11 +34,39 @@ const createFit = async (req, res) => {
 };
 
 const updateFit = async (req, res) => {
-  res.send("update a fit");
+  const {
+    body: { title, description },
+    user: { userId },
+    params: { id: fitId },
+  } = req;
+
+  if (title === "" || description === "") {
+    throw new BadRequestError("Title and Description fields cannot be empty");
+  }
+
+  const fit = await Fit.findByIdAndUpdate(
+    { _id: fitId, createdBy: userId },
+    req.body,
+    { new: true, runValidators: true },
+  );
+
+  if (!fit) {
+    throw new NotFoundError(`No fit with id ${fitId}`);
+  }
+  res.status(StatusCodes.OK).json(fit);
 };
 
 const deleteFit = async (req, res) => {
-  res.send("delete fit");
+  const {
+    user: { userId },
+    params: { id: fitId },
+  } = req;
+
+  const fit = await Fit.findOneAndDelete({ _id: fitId, createdBy: userId });
+  if (!fit) {
+    throw new NotFoundError(`No fit with id ${fitId}`);
+  }
+  res.status(StatusCodes.OK).json(fit);
 };
 
 module.exports = { getAllFits, getFit, createFit, updateFit, deleteFit };
