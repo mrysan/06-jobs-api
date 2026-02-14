@@ -35,9 +35,11 @@ app.use(cors());
 app.use(xss());
 
 // routes
+app.use(express.static("public"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/fits", authenticateUser, fitsRouter);
 
+// error handlers
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
