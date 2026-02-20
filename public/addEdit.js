@@ -1,29 +1,29 @@
 import { enableInput, inputEnabled, message, setDiv, token } from "./index.js";
-import { showJobs } from "./fits.js";
+import { showFits } from "./fits.js";
 
 let addEditDiv = null;
-let company = null;
-let position = null;
+let title = null;
+let description = null;
 let status = null;
-let addingJob = null;
+let addingFit = null;
 
 export const handleAddEdit = () => {
-  addEditDiv = document.getElementById("edit-job");
-  company = document.getElementById("company");
-  position = document.getElementById("position");
+  addEditDiv = document.getElementById("edit-fit");
+  title = document.getElementById("title");
+  description = document.getElementById("description");
   status = document.getElementById("status");
-  addingJob = document.getElementById("adding-job");
+  addingFit = document.getElementById("adding-fit");
   const editCancel = document.getElementById("edit-cancel");
 
   addEditDiv.addEventListener("click", async (e) => {
     if (inputEnabled && e.target.nodeName === "BUTTON") {
-      if (e.target === addingJob) {
+      if (e.target === addingFit) {
         enableInput(false);
 
         let method = "POST";
         let url = "/api/v1/fits";
 
-        if (addingJob.textContent === "update") {
+        if (addingFit.textContent === "update") {
           method = "PATCH";
           url = `/api/v1/fits/${addEditDiv.dataset.id}`;
         }
@@ -37,8 +37,8 @@ export const handleAddEdit = () => {
             },
             // to-do: Update to match correct fits schema
             body: JSON.stringify({
-              company: company.value,
-              position: position.value,
+              title: title.value,
+              description: description.value,
               status: status.value,
             }),
           });
@@ -47,16 +47,16 @@ export const handleAddEdit = () => {
           if (response.status === 200 || response.status === 201) {
             if (response.status === 200) {
               // a 200 is expected for a successful update
-              message.textContent = "The job entry was updated.";
+              message.textContent = "The fit entry was updated.";
             } else {
               // a 201 is expected for a successful create
-              message.textContent = "The job entry was created.";
+              message.textContent = "The fit entry was created.";
             }
 
-            company.value = "";
-            position.value = "";
+            title.value = "";
+            description.value = "";
             status.value = "pending";
-            showJobs();
+            showFits();
           } else {
             message.textContent = data.msg;
           }
@@ -67,18 +67,18 @@ export const handleAddEdit = () => {
         enableInput(true);
       } else if (e.target === editCancel) {
         message.textContent = "";
-        showJobs();
+        showFits();
       }
     }
   });
 };
 
-export const showAddEdit = async (jobId) => {
-  if (!jobId) {
-    company.value = "";
-    position.value = "";
+export const showAddEdit = async (fitId) => {
+  if (!fitId) {
+    title.value = "";
+    description.value = "";
     status.value = "pending";
-    addingJob.textContent = "add";
+    addingFit.textContent = "add";
     message.textContent = "";
 
     setDiv(addEditDiv);
@@ -86,7 +86,7 @@ export const showAddEdit = async (jobId) => {
     enableInput(false);
 
     try {
-      const response = await fetch(`/api/v1/fits/${jobId}`, {
+      const response = await fetch(`/api/v1/fits/${fitId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -97,23 +97,23 @@ export const showAddEdit = async (jobId) => {
       const data = await response.json();
       if (response.status === 200) {
         console.log(data);
-        company.value = data.title;
-        position.value = data.description;
+        title.value = data.title;
+        description.value = data.description;
         status.value = data.status;
-        addingJob.textContent = "update";
+        addingFit.textContent = "update";
         message.textContent = "";
-        addEditDiv.dataset.id = jobId;
+        addEditDiv.dataset.id = fitId;
 
         setDiv(addEditDiv);
       } else {
         // might happen if the list has been updated since last display
-        message.textContent = "The jobs entry was not found";
-        showJobs();
+        message.textContent = "The fits entry was not found";
+        showFits();
       }
     } catch (err) {
       console.log(err);
       message.textContent = "A communications error has occurred.";
-      showJobs();
+      showFits();
     }
 
     enableInput(true);
