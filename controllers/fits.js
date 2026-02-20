@@ -66,7 +66,7 @@ const deleteFit = async (req, res) => {
   if (!fit) {
     throw new NotFoundError(`No fit with id ${fitId}`);
   }
-  res.status(StatusCodes.OK).json(fit);
+  res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
 
 module.exports = { getAllFits, getFit, createFit, updateFit, deleteFit };
