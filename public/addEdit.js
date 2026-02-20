@@ -35,7 +35,6 @@ export const handleAddEdit = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            // to-do: Update to match correct fits schema
             body: JSON.stringify({
               title: title.value,
               description: description.value,

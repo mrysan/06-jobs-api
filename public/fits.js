@@ -29,7 +29,6 @@ export const handleFits = () => {
       } else if (e.target.classList.contains("editButton")) {
         message.textContent = "";
         showAddEdit(e.target.dataset.id);
-        //to-do: create delete functionality
       } else if (e.target.classList.contains("deleteButton")) {
         try {
           const response = await fetch(`/api/v1/fits/${e.target.dataset.id}`, {
